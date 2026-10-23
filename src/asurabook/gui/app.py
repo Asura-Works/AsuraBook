@@ -10,6 +10,7 @@ import json
 import sys
 from pathlib import Path
 
+from PySide6.QtCore import QEvent, QThreadPool
 from PySide6.QtWidgets import (QApplication, QComboBox, QDialog, QDialogButtonBox, QFormLayout, QHBoxLayout, QLabel,
                                QLineEdit, QListWidget, QMainWindow, QMessageBox, QStackedWidget, QVBoxLayout, QWidget)
 
@@ -127,6 +128,10 @@ def run(data_dir: Path) -> int:
     window = MainWindow(core)
     window.show()
     code = app.exec()
+    # 実行中の worker を待ち、Qt object を QApplication より先に破棄してから DB を閉じる
+    QThreadPool.globalInstance().waitForDone()
+    window.deleteLater()
+    QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     core.close()
     return code
 

@@ -18,7 +18,18 @@ pytestmark = pytest.mark.gui
 
 @pytest.fixture
 def app():
-    return QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    yield app
+    # Qt object を QApplication より先に確実に破棄する (終了時の segfault を防ぐ)
+    from PySide6.QtCore import QEvent, QThreadPool
+    import gc
+    QThreadPool.globalInstance().waitForDone()
+    for w in QtWidgets.QApplication.topLevelWidgets():
+        w.close()
+        w.deleteLater()
+    QtWidgets.QApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+    app.processEvents()
+    gc.collect()
 
 
 def test_main_window_pages_and_journal_editor(app, tmp_path, monkeypatch):
@@ -49,5 +60,6 @@ def test_main_window_pages_and_journal_editor(app, tmp_path, monkeypatch):
     assert journal_page.model.rowCount() == 1
     window.nav.setCurrentRow(0)
     assert window.pages[0].labels["expense_jpy"].text() == "11,000 円"
+    editor.close()
     window.close()
     core.close()
