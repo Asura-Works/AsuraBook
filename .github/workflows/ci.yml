@@ -32,7 +32,17 @@ jobs:
       - name: Runtime report
         run: uv run python -c "import sys, sqlite3, platform; print(sys.version); print('sqlite', sqlite3.sqlite_version); print(platform.platform())"
       - name: Tests (core)
-        run: uv run pytest -q -rs -m "not gui"
+        shell: bash
+        run: |
+          set -o pipefail
+          uv run pytest -q -rs -m "not gui" 2>&1 | tee pytest-core.txt
       - name: Tests (GUI offscreen)
         if: always()
-        run: uv run pytest -q -rs -m gui -p no:cacheprovider
+        shell: bash
+        run: |
+          set -o pipefail
+          uv run pytest -q -rs -m gui -p no:cacheprovider 2>&1 | tee pytest-gui.txt
+      - name: Report failures as annotations
+        if: failure()
+        shell: bash
+        run: python scripts/ci_annotate.py pytest-core.txt pytest-gui.txt
