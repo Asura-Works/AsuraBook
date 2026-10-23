@@ -157,8 +157,10 @@ def build() -> Cli:
     L("evidence", "list", "evidence.list", help="証憑一覧")
     p = L("evidence", "show", "evidence.show", lambda a: {"document_id": a.id}, help="証憑1件")
     p.add_argument("id")
-    p = L("evidence", "read", "evidence.read", lambda a: {"document_id": a.id}, help="読取りを待ち行列へ")
+    p = L("evidence", "read", "evidence.read", lambda a: {"document_id": a.id, "provider": a.provider},
+          help="読取りを待ち行列へ")
     p.add_argument("id")
+    p.add_argument("--provider", choices=["claude_cli", "codex_cli"], default="claude_cli")
     p = L("evidence", "review", "evidence.review", lambda a: {"document_id": a.id}, help="確認値の保存 (--input)")
     p.add_argument("id")
     p = L("evidence", "link", "evidence.link", lambda a: {"document_id": a.id, "entry_id": a.entry_id},
@@ -227,7 +229,8 @@ def build() -> Cli:
     p = L("asset", "depreciate", "asset.depreciate", lambda a: _year(a), help="減価償却の計上 (owner)")
     p.add_argument("--year", type=int, required=True)
 
-    L("ai", "status", None, local=_ai_status, help="Claude CLI の版・flag・実効認証")
+    p = L("ai", "status", None, local=_ai_status, help="AI CLI の版・flag・実効認証")
+    p.add_argument("--provider", choices=["claude_cli", "codex_cli"], default="claude_cli")
     L("ai", "jobs", "ai.jobs", help="AI job 履歴")
     p = L("worker", "run", None, local=_worker_run, help="OCR・upload を処理する")
     p.add_argument("--drain", action="store_true")
@@ -272,10 +275,13 @@ def _schema_show(a: argparse.Namespace, core: Core) -> dict:
 
 
 def _ai_status(a: argparse.Namespace, core: Core) -> dict:
-    from ..agents import bridge
+    from ..agents import bridge, codex
     from ..application import config as app_config
+    ai = app_config.load(core.paths)["ai"]
     try:
-        return bridge.doctor(bridge.AgentPolicy.from_config(app_config.load(core.paths)["ai"]))
+        if a.provider == "codex_cli":
+            return codex.doctor(codex.policy_from_config(ai))
+        return bridge.doctor(bridge.AgentPolicy.from_config(ai))
     except bridge.AgentError as exc:
         return {"ok": False, "error": {"code": exc.code, "message": exc.message, **exc.details}}
 

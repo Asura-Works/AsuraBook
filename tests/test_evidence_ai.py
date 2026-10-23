@@ -244,3 +244,96 @@ def test_doctor_reports_flags_and_auth(fake_claude):
     assert report["ok"] and report["version"].startswith("9.9.9")
     assert report["flags"]["--restricted"] is True
     assert report["auth"]["auth_method"] == "claude.ai"
+
+
+# ---------------------------------------------------------------- Codex adapter (偽CLI。実 Codex では未検証)
+
+FAKE_CODEX = r'''#!{python}
+import json, os, sys
+from pathlib import Path
+cfg = json.loads(Path(__file__).with_suffix(".json").read_text())
+args = sys.argv[1:]
+if args == ["--version"]:
+    print("codex-cli 0.0.0-fake"); sys.exit(0)
+if args == ["exec", "--help"]:
+    print("--sandbox --output-schema --output-last-message --json --image --skip-git-repo-check --ephemeral "
+          "--ignore-user-config"); sys.exit(0)
+if args[:2] == ["login", "status"]:
+    print(cfg["login"]); sys.exit(0)
+out = args[args.index("--output-last-message") + 1]
+log = {"args": args, "env_keys": sorted(os.environ), "cwd_files": sorted(os.listdir(".")), "stdin": sys.stdin.read()}
+Path(cfg["log"]).write_text(json.dumps(log))
+for event in cfg["events"]:
+    print(json.dumps(event))
+if cfg.get("final") is not None:
+    Path(out).write_text(cfg["final"])
+sys.exit(cfg.get("exit", 0))
+'''
+
+
+@pytest.fixture
+def fake_codex(tmp_path: Path):
+    if sys.platform == "win32":
+        pytest.skip("POSIX shebang の偽CLI")
+    exe = tmp_path / "codex"
+    exe.write_text(FAKE_CODEX.replace("{python}", sys.executable))
+    exe.chmod(exe.stat().st_mode | stat.S_IXUSR)
+    cfg = {"login": "Logged in using ChatGPT", "events": [{"type": "turn.completed", "usage": {"input_tokens": 5}}],
+           "final": json.dumps(EXAMPLE), "log": str(tmp_path / "codex-log.json")}
+
+    def configure(**over):
+        cfg.update(over)
+        exe.with_suffix(".json").write_text(json.dumps(cfg))
+        return exe
+    configure()
+    configure.log = tmp_path / "codex-log.json"
+    return configure
+
+
+def test_codex_adapter_contract(fake_codex, tmp_path: Path, monkeypatch):
+    from asurabook.agents import codex
+    exe = fake_codex()
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-should-not-leak")
+    job = tmp_path / "job"
+    job.mkdir()
+    (job / "input-1.png").write_bytes(PNG)
+    policy = codex.policy_from_config({"codex_exe": str(exe), "auth_mode": "subscription"})
+    result = codex.run_receipt_extract(policy, job, ["input-1.png"], receipt.build_prompt(["input-1.png"], attached=True),
+                                       receipt.compact_schema())
+    assert result.status == "succeeded" and result.structured_output["total_jpy"] == 1100
+    assert result.usage == {"input_tokens": 5}
+    log = json.loads(fake_codex.log.read_text())
+    assert "OPENAI_API_KEY" not in log["env_keys"]
+    args = log["args"]
+    assert args[:3] == ["exec", "--sandbox", "read-only"] and args[-1] == "-"
+    assert "features.shell_tool=false" in args and 'web_search="disabled"' in args
+    assert "--ignore-user-config" in args and args[args.index("--image") + 1].endswith("input-1.png")
+    assert log["cwd_files"] == ["input-1.png"]  # schema・出力は job フォルダの外
+    assert not (tmp_path / "job-meta").exists()
+
+
+def test_codex_adapter_failures(fake_codex, tmp_path: Path):
+    from asurabook.agents import codex
+    job = tmp_path / "job"
+    job.mkdir()
+    exe = fake_codex(login="Logged in using an API key")
+    policy = codex.policy_from_config({"codex_exe": str(exe)})
+    with pytest.raises(bridge.AgentError) as info:
+        codex.run_receipt_extract(policy, job, ["input-1.png"], "p", "{}")
+    assert info.value.code == "AUTH_MODE_MISMATCH"
+    fake_codex(login="Logged in using ChatGPT", final="合計は1100円です")
+    assert codex.run_receipt_extract(policy, job, ["input-1.png"], "p", "{}").status == "invalid_output"
+    fake_codex(final=None, events=[{"type": "error", "message": "rate limit reached"}])
+    assert codex.run_receipt_extract(policy, job, ["input-1.png"], "p", "{}").status == "quota_wait"
+    fake_codex(final=None, events=[])
+    assert codex.run_receipt_extract(policy, job, ["input-1.png"], "p", "{}").status == "outcome_unknown"
+
+
+def test_codex_requires_configuration(client: Client, core, tmp_path: Path, fake_codex):
+    doc = client.ok("evidence.add", {"path": str(_image(tmp_path)), "auto_read": False})
+    assert client.err("evidence.read", {"document_id": doc["id"], "provider": "codex_cli"})["code"] == "NOT_CONFIGURED"
+    app_config.set_value(core.paths, "ai.codex_exe", str(fake_codex()))
+    client.ok("evidence.read", {"document_id": doc["id"], "provider": "codex_cli"})
+    result = Worker(core, ASSISTANT).run_ocr_once()
+    assert result["agent_status"] == "succeeded" and result["ocr_state"] == "extracted"
+    assert client.ok("ai.jobs")[0]["provider"] == "codex_cli"

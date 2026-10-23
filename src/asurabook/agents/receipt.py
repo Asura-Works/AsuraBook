@@ -40,11 +40,12 @@ def prompt_template() -> str:
     return text[start + len("## 指示"):end].strip()
 
 
-def build_prompt(file_names: list[str]) -> str:
+def build_prompt(file_names: list[str], *, attached: bool = False) -> str:
     manifest = json.dumps(file_names, ensure_ascii=False)
     body = prompt_template().replace("{{input_manifest}}", manifest)
-    return (body + "\n\n画像は作業フォルダ内の上記ファイル名です。Read ツールで読み、"
-            "結果は指定された JSON Schema の構造化出力だけで返してください。")
+    how = ("画像はこの依頼に添付されています。" if attached
+           else "画像は作業フォルダ内の上記ファイル名です。Read ツールで読み、")
+    return body + "\n\n" + how + "結果は指定された JSON Schema の構造化出力だけで返してください。"
 
 
 def validate(extraction: Any) -> tuple[bool, list[dict]]:

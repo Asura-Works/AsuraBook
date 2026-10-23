@@ -18,6 +18,9 @@ DEFAULTS: dict[str, Any] = {
         "model": None,
         "timeout_seconds": 180,
         "auto_read_receipts": True,
+        # Codex は利用者が設定したときだけ使う代替 (実CLIでは未検証)
+        "codex_exe": None,
+        "codex_model": None,
     },
     # cloud.provider: null (未設定) | "local_dir" (開発・検証用。クラウドではない)
     "cloud": {"provider": None, "root": None},
@@ -25,6 +28,7 @@ DEFAULTS: dict[str, Any] = {
 
 _ALLOWED = {
     "ai.exe", "ai.auth_mode", "ai.allowed_auth_methods", "ai.model", "ai.timeout_seconds", "ai.auto_read_receipts",
+    "ai.codex_exe", "ai.codex_model",
     "cloud.provider", "cloud.root",
 }
 

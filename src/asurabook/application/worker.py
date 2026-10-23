@@ -5,7 +5,7 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-from ..agents import bridge, receipt
+from ..agents import bridge, codex, receipt
 from ..evidence.cloud import provider_from_config
 from ..evidence.spool import open_object
 from . import config as app_config
@@ -17,10 +17,10 @@ _EXT = {"image/jpeg": ".jpg", "image/png": ".png", "image/gif": ".gif", "image/w
 
 
 class Worker:
-    def __init__(self, core: Core, session: Session, *, runner=bridge.run_receipt_extract):
+    def __init__(self, core: Core, session: Session, *, runner=None):
         self.core = core
         self.session = session
-        self.runner = runner  # 試験では偽の実行関数に差し替える
+        self.runner = runner  # 試験では偽の実行関数に差し替える (全 provider 共通)
 
     def _call(self, name: str, payload: dict | None = None) -> dict:
         return self.core.execute(name, payload or {}, self.session)
@@ -34,14 +34,20 @@ class Worker:
         job = claim["data"]
         if job is None:
             return None
-        policy = bridge.AgentPolicy.from_config(app_config.load(self.core.paths)["ai"])
+        ai = app_config.load(self.core.paths)["ai"]
+        if job["provider"] == "codex_cli":
+            policy, runner, attached = codex.policy_from_config(ai), codex.run_receipt_extract, True
+        else:
+            policy, runner, attached = bridge.AgentPolicy.from_config(ai), bridge.run_receipt_extract, False
+        runner = self.runner or runner
         job_dir = self.core.paths.jobs / job["agent_job_id"]
         job_dir.mkdir(parents=True, exist_ok=True)
         name = "input-1" + _EXT.get(job["mime"], ".bin")
         try:
             data = open_object(self.core.paths.spool, job["local_ref"])
             (job_dir / name).write_bytes(data)  # 内部名でコピーした必要画像だけを渡す
-            result = self.runner(policy, job_dir, [name], receipt.build_prompt([name]), receipt.compact_schema())
+            result = runner(policy, job_dir, [name], receipt.build_prompt([name], attached=attached),
+                            receipt.compact_schema())
             outcome = {
                 "status": result.status, "structured_output": result.structured_output, "usage": result.usage,
                 "model": result.model, "cli_version": result.cli_version,

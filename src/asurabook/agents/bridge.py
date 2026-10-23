@@ -111,7 +111,7 @@ def child_env(policy: AgentPolicy, parent: dict[str, str] | None = None) -> dict
     parent = dict(os.environ if parent is None else parent)
     allowed = set(BASE_ENV_ALLOWLIST)
     if policy.auth_mode == "api_key":
-        allowed |= set(API_KEY_ENV)
+        allowed |= set(API_KEY_ENV if policy.provider == "claude_cli" else ("OPENAI_API_KEY", "CODEX_API_KEY"))
     env = {k: v for k, v in parent.items() if k in allowed}
     if policy.auth_mode == "subscription":
         leaked = [k for k in FORBIDDEN_IN_SUBSCRIPTION if k in env]

@@ -142,7 +142,12 @@ def evidence_read(ctx: CommandContext, payload: dict) -> dict:
                           (obj["id"],)).fetchone()
     if active:
         return {"ocr_job_id": active["id"], "state": active["state"], "already_active": True}
-    job = _queue_ocr(ctx, obj["id"], payload.get("provider", "claude_cli"))
+    provider = payload.get("provider", "claude_cli")
+    if provider not in ("claude_cli", "codex_cli"):
+        raise invalid("provider は claude_cli/codex_cli です")
+    if provider == "codex_cli" and not app_config.load(ctx.paths)["ai"].get("codex_exe"):
+        raise AsuraBookError("NOT_CONFIGURED", "Codex は設定 (ai.codex_exe) された場合だけ使えます")
+    job = _queue_ocr(ctx, obj["id"], provider)
     ctx.audit(target_type="ocr_job", target_id=job)
     return {"ocr_job_id": job, "state": "queued", "already_active": False}
 
