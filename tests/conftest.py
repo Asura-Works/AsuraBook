@@ -59,3 +59,15 @@ def core(tmp_path: Path) -> Core:
 @pytest.fixture
 def client(core: Core) -> Client:
     return Client(core)
+
+
+def pytest_runtest_logreport(report) -> None:
+    """GitHub Actions では失敗を annotation として出す (ログ本体を取得できない環境でも原因を読めるように)。"""
+    import os
+    import sys
+    if not os.environ.get("GITHUB_ACTIONS") or not report.failed:
+        return
+    text = str(report.longrepr)[-1800:]
+    text = text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+    sys.__stdout__.write(f"::error title={report.nodeid} ({report.when})::{text}\n")
+    sys.__stdout__.flush()

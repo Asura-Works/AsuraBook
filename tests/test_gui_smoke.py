@@ -13,6 +13,9 @@ from asurabook.application.core import Core  # noqa: E402
 from asurabook.application.session import gui_owner_session  # noqa: E402
 
 
+pytestmark = pytest.mark.gui
+
+
 @pytest.fixture
 def app():
     return QtWidgets.QApplication.instance() or QtWidgets.QApplication([])

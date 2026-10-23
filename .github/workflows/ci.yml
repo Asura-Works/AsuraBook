@@ -31,5 +31,8 @@ jobs:
         run: uv sync --locked --all-extras
       - name: Runtime report
         run: uv run python -c "import sys, sqlite3, platform; print(sys.version); print('sqlite', sqlite3.sqlite_version); print(platform.platform())"
-      - name: Tests
-        run: uv run pytest -q -rs
+      - name: Tests (core)
+        run: uv run pytest -q -rs -m "not gui"
+      - name: Tests (GUI offscreen)
+        if: always()
+        run: uv run pytest -q -rs -m gui -p no:cacheprovider

@@ -28,3 +28,4 @@ build-backend = "uv_build"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = ["gui: PySide6 offscreen の GUI 試験"]
