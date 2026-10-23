@@ -20,10 +20,10 @@ from ..application.session import gui_owner_session
 from .common import AppContext
 from .pages import (BackupPage, EvidencePage, HomePage, ImportPage, JobsPage, JournalPage, Page, ReconcilePage,
                     ReportsPage, SettingsPage, YearEndPage)
-from .pages_extra import ChecksPage, TaxProfilePage
+from .pages_extra import ChecksPage, ClosingPage, TaxProfilePage
 
-ALL_PAGES = (HomePage, JournalPage, ImportPage, EvidencePage, ReconcilePage, ReportsPage, ChecksPage, YearEndPage,
-             TaxProfilePage, JobsPage, BackupPage, SettingsPage)
+ALL_PAGES = (HomePage, JournalPage, ImportPage, EvidencePage, ReconcilePage, ReportsPage, ChecksPage, ClosingPage,
+             YearEndPage, TaxProfilePage, JobsPage, BackupPage, SettingsPage)
 
 
 class SetupDialog(QDialog):

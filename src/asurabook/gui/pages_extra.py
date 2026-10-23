@@ -175,3 +175,107 @@ class TaxProfilePage(Page):
                              expected_revision=self.version)
         if data:
             self.ctx.changed.emit()
+
+
+class ClosingPage(Page):
+    """決算整理: 家事按分 (年末一括) と固定資産・減価償却。"""
+
+    title = "決算整理"
+
+    def __init__(self, ctx: AppContext):
+        super().__init__(ctx)
+        from PySide6.QtWidgets import QInputDialog
+        self._input = QInputDialog
+        self.rules = DictTableModel(
+            [("account_name", "対象科目"), ("period_start", "開始"), ("period_end", "終了"), ("business_ratio", "事業割合"),
+             ("base", "対象額"), ("private", "私用分"), ("applied", "適用"), ("basis", "根拠")],
+            money={"base", "private"},
+            formatters={"base": lambda r: f"{r['preview']['base_jpy']:,}", "private": lambda r: f"{r['preview']['private_jpy']:,}",
+                        "applied": lambda r: "適用済み" if r["applied"] else "未適用"})
+        self.rules_view = _table(self.rules)
+        self.assets = DictTableModel(
+            [("name", "資産"), ("acquired_on", "取得日"), ("acquisition_cost_jpy", "取得価額"), ("method", "方法"),
+             ("months", "月数"), ("dep", "償却額"), ("book", "期末簿価"), ("posted", "計上")],
+            money={"acquisition_cost_jpy", "dep", "book"},
+            formatters={"months": lambda r: str(r["calculation"]["months"]),
+                        "dep": lambda r: f"{r['calculation']['depreciation_jpy']:,}",
+                        "book": lambda r: f"{r['calculation']['book_value_end_jpy']:,}",
+                        "posted": lambda r: "計上済み" if r["posted_this_year"] else "未計上",
+                        "method": lambda r: {"straight_line": "定額法", "lump_sum_3y": "一括償却(3年)",
+                                             "immediate_small": "即時償却"}.get(r["method"], r["method"])})
+        row1 = QHBoxLayout()
+        for label, slot in (("按分ルール追加", self.add_rule), ("選択ルールを適用", self.apply_rule)):
+            b = QPushButton(label)
+            b.clicked.connect(slot)
+            row1.addWidget(b)
+        row2 = QHBoxLayout()
+        for label, slot in (("資産を登録", self.add_asset), ("今年度の減価償却を計上", self.depreciate)):
+            b = QPushButton(label)
+            b.clicked.connect(slot)
+            row2.addWidget(b)
+        layout = QVBoxLayout(self)
+        layout.addWidget(QLabel("家事按分 (年末一括。計上時に按分済みの仕訳は対象外)"))
+        layout.addWidget(self.rules_view)
+        layout.addLayout(row1)
+        layout.addWidget(QLabel("固定資産台帳 (耐用年数・償却率・特例の可否は公式資料で確認して入力してください)"))
+        layout.addWidget(_table(self.assets))
+        layout.addLayout(row2)
+
+    def refresh(self) -> None:
+        if self.ctx.year is None:
+            return
+        self.rules.set_rows(self.ctx.call("apportionment.list", {"year": self.ctx.year}, quiet=True) or [])
+        self.assets.set_rows(self.ctx.call("asset.list", {"year": self.ctx.year}, quiet=True) or [])
+
+    def _ask(self, title: str, label: str, default: str = "") -> str | None:
+        text, ok = self._input.getText(self, title, label, text=default)
+        return text.strip() if ok else None
+
+    def add_rule(self) -> None:
+        account = self._ask("家事按分", "対象の費用科目コード (例 514 通信費、512 水道光熱費)")
+        ratio = account and self._ask("家事按分", "事業割合 (例 0.6)")
+        basis = ratio and self._ask("家事按分", "根拠 (例 業務使用時間の記録)")
+        if basis:
+            self.ctx.call("apportionment.rule_create", {"year": self.ctx.year, "account": account,
+                                                        "business_ratio": ratio, "basis": basis})
+            self.ctx.changed.emit()
+
+    def apply_rule(self) -> None:
+        for r in _selected(self.rules_view, self.rules):
+            if QMessageBox.question(self, "家事按分", f"{r['account_name']} の私用分 {r['preview']['private_jpy']:,} 円を "
+                                    "事業主貸へ振り替える整理仕訳を確定します。よろしいですか？"
+                                    ) == QMessageBox.StandardButton.Yes:
+                self.ctx.call("apportionment.apply", {"rule_id": r["id"]})
+        self.ctx.changed.emit()
+
+    def add_asset(self) -> None:
+        name = self._ask("資産登録", "名称")
+        cost = name and self._ask("資産登録", "取得価額 (円)")
+        acquired = cost and self._ask("資産登録", "取得日・供用日 (YYYY-MM-DD)")
+        if not acquired:
+            return
+        method, ok = self._input.getItem(self, "資産登録", "償却方法", ["straight_line", "lump_sum_3y",
+                                                                       "immediate_small"], 0, False)
+        if not ok:
+            return
+        payload = {"name": name, "acquisition_cost_jpy": int(cost.replace(",", "")) if cost.replace(",", "").isdigit()
+                   else cost, "acquired_on": acquired, "method": method}
+        if method == "straight_line":
+            life = self._ask("資産登録", "耐用年数 (年)")
+            rate = life and self._ask("資産登録", "償却率 (公式の償却率表の値。例 0.250)")
+            if not rate:
+                return
+            payload |= {"useful_life_years": int(life) if life.isdigit() else life, "rate_decimal": rate}
+        ratio = self._ask("資産登録", "事業割合 (例 1 または 0.8)", "1")
+        basis = ratio and self._ask("資産登録", "根拠 (耐用年数表の区分・特例の確認内容)")
+        if basis:
+            self.ctx.call("asset.register", payload | {"business_ratio": ratio, "basis": basis})
+            self.ctx.changed.emit()
+
+    def depreciate(self) -> None:
+        if QMessageBox.question(self, "減価償却", f"{self.ctx.year}年度の未計上の減価償却を整理仕訳として確定します。"
+                                "よろしいですか？") == QMessageBox.StandardButton.Yes:
+            data = self.ctx.call("asset.depreciate", {"year": self.ctx.year})
+            if data:
+                QMessageBox.information(self, "減価償却", f"計上 {len(data['posted'])} 件 / 対象外 {len(data['skipped'])} 件")
+            self.ctx.changed.emit()

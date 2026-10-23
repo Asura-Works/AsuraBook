@@ -206,6 +206,23 @@ def run_checks(ctx: CommandContext, year) -> tuple[list[dict], dict]:
                                   f"{prev_year['year']}年度からの期首繰越がまだありません", {},
                                   f"{prev_year['year']}年度の決算後に繰越を実行してください"))
 
+    from .closing import _asset_schedule, _rule_view
+    for asset in conn.execute("SELECT * FROM fixed_assets WHERE acquired_on <= ?", (year["end_date"],)).fetchall():
+        sched = _asset_schedule(conn, asset, year)
+        if not sched["posted_this_year"] and sched["calculation"]["depreciation_jpy"] > 0:
+            found.append(_finding("決算整理", "ASSET_NOT_DEPRECIATED", f"asset:{asset['id']}", "warning",
+                                  f"{asset['name']} の{year['year']}年度の減価償却 ({sched['calculation']['depreciation_jpy']:,} 円) が未計上です",
+                                  {"asset_id": asset["id"], "calculation": sched["calculation"]},
+                                  "決算整理で減価償却を計上してください"))
+    for rule in conn.execute("SELECT * FROM apportionment_rules WHERE fiscal_year_id=? AND status='active'",
+                             (year["id"],)).fetchall():
+        view = _rule_view(conn, rule)
+        if not view["applied"] and view["preview"]["private_jpy"] > 0:
+            found.append(_finding("決算整理", "APPORTIONMENT_NOT_APPLIED", f"apportionment:{rule['id']}", "warning",
+                                  f"{view['account_name']} の家事按分 (私用分 {view['preview']['private_jpy']:,} 円) が未適用です",
+                                  {"rule_id": rule["id"], "preview": view["preview"]},
+                                  "決算整理で家事按分を適用してください"))
+
     # 他所得・控除 / 申告情報
     profile_row = latest_profile(conn, year["id"])
     if profile_row is None:

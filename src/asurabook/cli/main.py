@@ -210,6 +210,23 @@ def build() -> Cli:
     p = L("monitor", "ack", "monitor.ack", lambda a: {"id": a.id}, help="finding を既読にする (解消ではない)")
     p.add_argument("id")
 
+    p = L("apportionment", "list", "apportionment.list", lambda a: _year(a), help="家事按分ルールと計算")
+    p.add_argument("--year", type=int, required=True)
+    p = L("apportionment", "create", "apportionment.rule_create",
+          lambda a: _year(a) | {"account": a.account, "business_ratio": a.ratio, "basis": a.basis},
+          help="家事按分ルールの登録 (owner)")
+    p.add_argument("--year", type=int, required=True)
+    p.add_argument("--account", required=True)
+    p.add_argument("--ratio", required=True, help="事業割合 (例 0.6)")
+    p.add_argument("--basis", required=True)
+    p = L("apportionment", "apply", "apportionment.apply", lambda a: {"rule_id": a.rule_id}, help="按分の適用 (owner)")
+    p.add_argument("rule_id")
+    p = L("asset", "list", "asset.list", lambda a: _year(a), help="固定資産台帳と償却計算")
+    p.add_argument("--year", type=int, required=True)
+    L("asset", "register", "asset.register", help="固定資産の登録 (owner、--input)")
+    p = L("asset", "depreciate", "asset.depreciate", lambda a: _year(a), help="減価償却の計上 (owner)")
+    p.add_argument("--year", type=int, required=True)
+
     L("ai", "status", None, local=_ai_status, help="Claude CLI の版・flag・実効認証")
     L("ai", "jobs", "ai.jobs", help="AI job 履歴")
     p = L("worker", "run", None, local=_worker_run, help="OCR・upload を処理する")
