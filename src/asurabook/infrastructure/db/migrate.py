@@ -48,11 +48,11 @@ def ensure_compatible(conn: sqlite3.Connection) -> int:
     return version
 
 
-def migrate(conn: sqlite3.Connection) -> int:
+def migrate(conn: sqlite3.Connection, *, upto: int | None = None) -> int:
     """未適用のmigrationを排他transactionで順に適用する。"""
     version = ensure_compatible(conn)
     for number, name, sql in available_migrations():
-        if number <= version:
+        if number <= version or (upto is not None and number > upto):
             continue
         # executescript は暗黙COMMITするため、文ごとに分割せず BEGIN を含めて渡す
         script = f"BEGIN IMMEDIATE;\n{sql}\n" + (

@@ -767,6 +767,3 @@ class SettingsPage(Page):
         self.ctx.call("settings.set", {"key": key, "value": value})
         self.refresh()
 
-
-ALL_PAGES = (HomePage, JournalPage, ImportPage, EvidencePage, ReconcilePage, ReportsPage, YearEndPage, JobsPage,
-             BackupPage, SettingsPage)

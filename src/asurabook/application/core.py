@@ -20,7 +20,7 @@ from ..domain.errors import AsuraBookError, invalid
 from ..domain.values import canonical_json, content_hash, new_id, sha256_hex, utc_now
 from ..infrastructure import runtime_control
 from ..infrastructure.db.connection import connect, read_snapshot, write_transaction
-from ..infrastructure.db.migrate import ensure_compatible, migrate
+from ..infrastructure.db.migrate import ensure_compatible, latest_version, migrate
 from ..infrastructure.locks import FileLock, LockBusy
 from ..infrastructure.paths import AppPaths
 from .session import Session
@@ -176,9 +176,37 @@ class Core:
 
     def writer(self) -> sqlite3.Connection:
         if self._conn is None:
-            self._conn = connect(self.paths.db)
-            ensure_compatible(self._conn)
+            conn = connect(self.paths.db)
+            try:
+                version = ensure_compatible(conn)
+                if version < latest_version():
+                    self._migrate_with_backup(conn, version)
+            except BaseException:
+                conn.close()
+                raise
+            self._conn = conn
         return self._conn
+
+    def _migrate_with_backup(self, conn: sqlite3.Connection, version: int) -> None:
+        """backup 後に保守mutexを取って排他 migration する (03章10節、16章8節)。"""
+        lock = FileLock(self.paths.maintenance_lock)
+        try:
+            lock.acquire()
+        except LockBusy:
+            raise AsuraBookError("MAINTENANCE", "別の保守処理が実行中のため migration できません") from None
+        try:
+            stamp = utc_now().replace(":", "").replace("-", "").split(".")[0]
+            dest = self.paths.root / "pre-migration" / f"schema-v{version}-{stamp}.db"
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            target = sqlite3.connect(str(dest))
+            try:
+                conn.backup(target)
+            finally:
+                target.close()
+            migrate(conn)
+            log.info("migrated schema v%s -> v%s (backup %s)", version, latest_version(), dest)
+        finally:
+            lock.release()
 
     def create_database(self) -> sqlite3.Connection:
         self.paths.ensure()

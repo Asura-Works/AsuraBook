@@ -60,6 +60,14 @@ def test_main_window_pages_and_journal_editor(app, tmp_path, monkeypatch):
     assert journal_page.model.rowCount() == 1
     window.nav.setCurrentRow(0)
     assert window.pages[0].labels["expense_jpy"].text() == "11,000 円"
+    checks = next(p for p in window.pages if p.title == "申告準備チェック")
+    checks.run_check()
+    assert checks.steps.rowCount() == 11 and checks.model.rowCount() > 0
+    tax = next(p for p in window.pages if p.title == "税務設定")
+    window.nav.setCurrentRow(window.pages.index(tax))
+    tax.inputs["filing_type"].setCurrentIndex(tax.inputs["filing_type"].findData("blue"))
+    tax.save()
+    assert core.execute("tax.profile_show", {"year": 2026}, window.ctx.session)["data"]["current"]["version"] == 1
     editor.close()
     window.close()
     core.close()

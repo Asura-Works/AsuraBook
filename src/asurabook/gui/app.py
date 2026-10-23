@@ -18,7 +18,12 @@ from ..application import commands  # noqa: F401  command登録
 from ..application.core import Core
 from ..application.session import gui_owner_session
 from .common import AppContext
-from .pages import ALL_PAGES, Page
+from .pages import (BackupPage, EvidencePage, HomePage, ImportPage, JobsPage, JournalPage, Page, ReconcilePage,
+                    ReportsPage, SettingsPage, YearEndPage)
+from .pages_extra import ChecksPage, TaxProfilePage
+
+ALL_PAGES = (HomePage, JournalPage, ImportPage, EvidencePage, ReconcilePage, ReportsPage, ChecksPage, YearEndPage,
+             TaxProfilePage, JobsPage, BackupPage, SettingsPage)
 
 
 class SetupDialog(QDialog):

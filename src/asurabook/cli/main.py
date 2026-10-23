@@ -190,6 +190,21 @@ def build() -> Cli:
     p = L("tax", "snapshot", "tax.snapshot_create", lambda a: _year(a), help="帳簿集計snapshot")
     p.add_argument("--year", type=int, required=True)
 
+    p = L("tax", "profile-show", "tax.profile_show", lambda a: _year(a), help="年度の税務設定")
+    p.add_argument("--year", type=int, required=True)
+    p = L("tax", "profile-set", "tax.profile_set", lambda a: _year(a) | ({"confirm": True} if a.confirm else {}),
+          help="税務設定の新しい版 (owner、--input で profile)")
+    p.add_argument("--year", type=int, required=True)
+    p.add_argument("--confirm", action="store_true")
+    p = L("monitor", "check", "monitor.check", lambda a: _year(a), help="申告準備の決定的検査")
+    p.add_argument("--year", type=int, required=True)
+    p = L("monitor", "findings", "monitor.findings", lambda a: _year(a) | _drop_none({"status": a.status}),
+          help="保存済みの finding")
+    p.add_argument("--year", type=int, required=True)
+    p.add_argument("--status", choices=["open", "acknowledged", "resolved"])
+    p = L("monitor", "ack", "monitor.ack", lambda a: {"id": a.id}, help="finding を既読にする (解消ではない)")
+    p.add_argument("id")
+
     L("ai", "status", None, local=_ai_status, help="Claude CLI の版・flag・実効認証")
     L("ai", "jobs", "ai.jobs", help="AI job 履歴")
     p = L("worker", "run", None, local=_worker_run, help="OCR・upload を処理する")
