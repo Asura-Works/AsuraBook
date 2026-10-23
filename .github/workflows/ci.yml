@@ -42,7 +42,22 @@ jobs:
         run: |
           set -o pipefail
           uv run pytest -q -rs -m gui -p no:cacheprovider 2>&1 | tee pytest-gui.txt
+      - name: Verify Windows-only tests actually ran
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          set -o pipefail
+          uv run pytest -q -rs tests/test_cli_ipc.py -k "windows_named_pipe" 2>&1 | tee pytest-win.txt
+          grep -q "1 passed" pytest-win.txt
+          echo "::notice title=windows-only tests::$(tail -1 pytest-win.txt)"
+      - name: Summaries as annotations
+        if: always()
+        shell: bash
+        run: |
+          for f in pytest-core.txt pytest-gui.txt; do
+            [ -f "$f" ] && echo "::notice title=${{ runner.os }} $f::$(tail -1 $f)"
+          done
       - name: Report failures as annotations
         if: failure()
         shell: bash
-        run: python scripts/ci_annotate.py pytest-core.txt pytest-gui.txt
+        run: python scripts/ci_annotate.py pytest-core.txt pytest-gui.txt pytest-win.txt
