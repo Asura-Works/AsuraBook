@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "jsonschema>=4.23",
+    # Windows には OS の IANA tz database がないため zoneinfo 用に必要
+    "tzdata>=2024.1; sys_platform == 'win32'",
 ]
 
 [project.optional-dependencies]
