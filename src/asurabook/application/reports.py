@@ -21,16 +21,15 @@ def account_balances(conn: sqlite3.Connection, fiscal_year_id: str, *, date_from
         cond.append("e.id IN (SELECT value FROM json_each(:ids))")
         import json
         params["ids"] = json.dumps(entry_ids)
-    rows = conn.execute(
-        f"""SELECT a.id, a.code, a.name, a.type, a.role,
+    # 仕訳側を先に科目別集計し、科目マスターと結合する (大量データで LEFT JOIN 全体を集計しない)
+    totals = {r["account_id"]: (int(r["debit_total"]), int(r["credit_total"])) for r in conn.execute(
+        f"""SELECT l.account_id,
                    COALESCE(SUM(CASE WHEN l.side='debit' THEN l.amount_jpy END),0) AS debit_total,
                    COALESCE(SUM(CASE WHEN l.side='credit' THEN l.amount_jpy END),0) AS credit_total
-            FROM accounts a
-            LEFT JOIN (journal_lines l JOIN journal_entries e ON e.id=l.entry_id AND {' AND '.join(cond)})
-                 ON l.account_id = a.id
-            GROUP BY a.id ORDER BY a.code""", params).fetchall()
-    return [AccountBalance(r["id"], r["code"], r["name"], r["type"], r["role"], int(r["debit_total"]),
-                           int(r["credit_total"])) for r in rows]
+            FROM journal_entries e JOIN journal_lines l ON l.entry_id = e.id
+            WHERE {' AND '.join(cond)} GROUP BY l.account_id""", params)}
+    return [AccountBalance(r["id"], r["code"], r["name"], r["type"], r["role"], *totals.get(r["id"], (0, 0)))
+            for r in conn.execute("SELECT id, code, name, type, role FROM accounts ORDER BY code")]
 
 
 def trial_balance(balances: list[AccountBalance]) -> dict:

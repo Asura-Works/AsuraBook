@@ -573,7 +573,7 @@ def journal_list(ctx: CommandContext, payload: dict) -> dict:
         cond.append("EXISTS (SELECT 1 FROM journal_lines x WHERE x.entry_id=e.id AND x.account_id=?)")
         params.append(acc["id"])
     if payload.get("amount_jpy") is not None:
-        cond.append("EXISTS (SELECT 1 FROM journal_lines x WHERE x.entry_id=e.id AND x.amount_jpy=?)")
+        cond.append("e.id IN (SELECT x.entry_id FROM journal_lines x WHERE x.amount_jpy=?)")
         params.append(int(payload["amount_jpy"]))
     if payload.get("cursor"):
         d, cid = str(payload["cursor"]).split("|", 1)
