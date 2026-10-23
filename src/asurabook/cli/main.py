@@ -311,7 +311,19 @@ def _emit(a: argparse.Namespace, resp: dict) -> None:
             print(json.dumps(err["details"], ensure_ascii=False, indent=2), file=sys.stderr)
 
 
+def _utf8_streams() -> None:
+    """Windows の pipe でも JSON の日本語を落とさないよう stdout/stderr を UTF-8 にする。"""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            try:
+                reconfigure(encoding="utf-8")
+            except (ValueError, OSError):
+                pass
+
+
 def main(argv: list[str] | None = None) -> int:
+    _utf8_streams()
     cli = build()
     a = cli.parser.parse_args(argv)
     if not getattr(a, "group", None) or (hasattr(a, "action") and a.action is None and a.core_command is None
