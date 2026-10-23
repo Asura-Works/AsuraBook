@@ -115,3 +115,33 @@ def test_ipc_server_uses_same_service_and_assistant_profile(tmp_path: Path):
         server.shutdown()
         server.server_close()
         core.close()
+
+
+@pytest.mark.gui
+def test_pdf_and_csv_exports_use_same_rows(tmp_path: Path):
+    pytest.importorskip("PySide6.QtGui")
+    from asurabook.application.core import Core
+    from asurabook.application.session import Session
+    import asurabook.application.commands  # noqa: F401
+    core = Core(tmp_path / "d")
+    o = Session("t:o", "owner", "gui")
+    assert core.execute("org.init", {"display_name": "架空", "years": [2026]}, o)["ok"]
+    for i in range(60):
+        d = core.execute("journal.draft", {"journal_date": "2026-03-01", "description": f"文具{i}", "lines": [
+            {"account": "519", "side": "debit", "amount_jpy": 1000 + i},
+            {"account": "100", "side": "credit", "amount_jpy": 1000 + i}]}, o)["data"]
+        core.execute("journal.validate", {"id": d["id"]}, o)
+        core.execute("journal.post", {"id": d["id"]}, o)
+    pdf = core.execute("report.export", {"year": 2026, "report": "journal", "path": "j.pdf"}, o)
+    csv = core.execute("report.export", {"year": 2026, "report": "journal", "path": "j.csv"}, o)
+    assert pdf["ok"] and csv["ok"], (pdf, csv)
+    assert pdf["data"]["rows"] == csv["data"]["rows"] == 120
+    assert pdf["data"]["pages"] >= 2
+    assert Path(pdf["data"]["written"]).read_bytes().startswith(b"%PDF")
+    for kind in ("trial_balance", "profit_loss", "balance_sheet"):
+        r = core.execute("report.export", {"year": 2026, "report": kind, "path": f"{kind}.pdf"}, o)
+        assert r["ok"], r
+    gl = core.execute("report.export", {"year": 2026, "report": "general_ledger", "account": "100",
+                                        "path": "gl.csv"}, o)
+    assert gl["ok"] and gl["data"]["rows"] == 60
+    core.close()

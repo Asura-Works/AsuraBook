@@ -571,9 +571,8 @@ class ReportsPage(Page):
 
     def export(self) -> None:
         kind = self.kind.currentData()
-        if kind == "balance_sheet":
-            kind = "trial_balance"
-        path, _ = QFileDialog.getSaveFileName(self, "CSV出力", str(self.ctx.core.paths.exports / f"{kind}.csv"), "CSV (*.csv)")
+        path, _ = QFileDialog.getSaveFileName(self, "帳票出力", str(self.ctx.core.paths.exports / f"{kind}.pdf"),
+                                              "PDF (*.pdf);;CSV (*.csv)")
         if path:
             data = self.ctx.call("report.export", {"year": self.ctx.year, "report": kind, "path": path,
                                                    "export_root_override": str(Path(path).parent)})

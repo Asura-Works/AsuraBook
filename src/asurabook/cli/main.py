@@ -175,11 +175,16 @@ def build() -> Cli:
     p = L("report", "ledger", "report.general_ledger", lambda a: _year(a) | {"account": a.account}, help="元帳")
     p.add_argument("--year", type=int, required=True)
     p.add_argument("--account", required=True)
-    p = L("report", "export", "report.export", lambda a: _year(a) | {"report": a.report, "path": a.path},
-          help="CSV出力 (export root 配下、上書きしない)")
+    p = L("report", "export", "report.export",
+          lambda a: _year(a) | _drop_none({"report": a.report, "path": a.path, "format": a.output_format,
+                                           "account": a.account}),
+          help="CSV/PDF出力 (export root 配下、上書きしない)")
     p.add_argument("--year", type=int, required=True)
-    p.add_argument("--report", required=True, choices=["trial_balance", "profit_loss", "journal"])
-    p.add_argument("--path", required=True)
+    p.add_argument("--report", required=True,
+                   choices=["trial_balance", "profit_loss", "balance_sheet", "journal", "general_ledger"])
+    p.add_argument("--path", required=True, help=".pdf なら PDF、それ以外は CSV")
+    p.add_argument("--output-format", choices=["csv", "pdf"])
+    p.add_argument("--account", help="general_ledger の科目")
     p = L("dashboard", None, "dashboard.summary", lambda a: _year(a), help="現在状況")
     p.add_argument("--year", type=int, required=True)
 
