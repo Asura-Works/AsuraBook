@@ -66,3 +66,9 @@ def test_carryforward_stale_is_error(client: Client):
     stale = next(f for f in result["findings"] if f["code"] == "CARRYFORWARD_STALE")
     assert stale["severity"] == "error"
     assert "OPENING_MISSING" not in codes(client.ok("monitor.check", {"year": 2027}))
+
+
+def test_empty_ledger_is_not_reported_complete(client: Client):
+    states = {s["step"]: s["state"] for s in client.ok("monitor.check", {"year": 2026})["readiness"]}
+    assert states["記帳"] == states["残高照合"] == states["証憑"] == "未着手"
+    assert "完了" not in states.values()

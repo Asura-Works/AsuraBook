@@ -247,7 +247,7 @@ def readiness(ctx: CommandContext, year, found: list[dict], facts: dict) -> list
             out.append({"step": step, "state": "要確認", "basis": "; ".join(f["message"] for f in items)[:300]})
         elif step == "資料取得" and not facts.get("source_accounts"):
             out.append({"step": step, "state": "未着手", "basis": "取込元アカウントが未登録です"})
-        elif step == "記帳" and not facts.get("posted_entries"):
+        elif step in ("記帳", "残高照合", "証憑") and not facts.get("posted_entries"):
             out.append({"step": step, "state": "未着手", "basis": "確定仕訳がありません"})
         elif step == "決算整理" and year["workflow_state"] == "open":
             out.append({"step": step, "state": "未着手", "basis": "年度は open です (決算整理を開始していません)"})
