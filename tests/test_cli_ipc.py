@@ -145,3 +145,49 @@ def test_pdf_and_csv_exports_use_same_rows(tmp_path: Path):
                                         "path": "gl.csv"}, o)
     assert gl["ok"] and gl["data"]["rows"] == 60
     core.close()
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows named pipe")
+def test_windows_named_pipe_server(tmp_path: Path):
+    import win32con
+    import win32file
+    import win32security
+    from asurabook.application.core import Core
+    from asurabook.application.session import Session, cli_session
+    from asurabook.infrastructure.ipc import winpipe
+    from asurabook.infrastructure.ipc.server import CoreClient, CoreServer
+    core = Core(tmp_path / "d")
+    owner = Session("t:owner", "owner", "gui")
+    assert core.execute("org.init", {"display_name": "架空", "years": [2026]}, owner)["ok"]
+    server = CoreServer(core, lambda reader: cli_session(reader=reader), "test")
+    server.serve_in_thread()
+    try:
+        client = CoreClient(core.paths.root, timeout=5)
+        assert client.welcome["profile"] == "assistant"
+        resp = client.execute("journal.draft", {"journal_date": "2026-03-01", "lines": [
+            {"account": "519", "side": "debit", "amount_jpy": 100},
+            {"account": "100", "side": "credit", "amount_jpy": 100}]})
+        assert resp["ok"], resp
+        entry = resp["data"]["id"]
+        assert client.execute("journal.validate", {"id": entry})["ok"]
+        assert client.execute("journal.post", {"id": entry})["error"]["code"] == "PERMISSION_DENIED"
+        big = client.execute("journal.list", {"year": 2026})
+        assert big["ok"] and len(big["data"]["items"]) == 1
+        client.close()
+        reader = CoreClient(core.paths.root, reader=True, timeout=5)
+        assert reader.welcome["profile"] == "reader"
+        reader.close()
+        # DACL は現在の利用者だけ
+        handle = win32file.CreateFile(server.address, win32con.GENERIC_READ | win32con.GENERIC_WRITE, 0, None,
+                                      win32con.OPEN_EXISTING, 0, None)
+        me = win32security.ConvertSidToStringSid(winpipe.current_user_sid())
+        assert winpipe.pipe_dacl_sids(handle) == [me]
+        assert winpipe.server_process_sid(handle) == winpipe.current_user_sid()
+        win32file.CloseHandle(handle)
+        # 同名 pipe の二重起動 (先取り) は拒否
+        with pytest.raises(RuntimeError):
+            CoreServer(core, lambda reader: cli_session(reader=reader), "test")
+    finally:
+        server.shutdown()
+        server.server_close()
+        core.close()
