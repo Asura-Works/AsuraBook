@@ -1,6 +1,6 @@
-# TaxDesk (AsuraBook)
+# AsuraBook
 
-個人事業者向けのローカル会計・証憑・申告準備アプリです。`docs/design/` の詳細設計書 1.0（2026-10-23）を基に実装しています。
+個人事業者向けのローカル会計・証憑・申告準備アプリです。`docs/design/` の詳細設計書 1.0（2026-10-23）を基に実装しています。設計書では「TaxDesk」という仮称を使っていますが、正式名は AsuraBook です。
 
 - 対象環境: Windows 11 / CPython 3.13 / uv / PySide6 / SQLite
 - 現状は M1（会計核・手入力・CSV取込・Claude によるレシート読取り・証憑保管・backup）の縦通しです
@@ -10,14 +10,14 @@
 
 ```bash
 uv sync --extra gui                     # 依存の導入 (GUI を使う場合は --extra gui)
-uv run taxdesk init --name "屋号" --years 2026
-uv run taxdesk gui                      # GUI (owner 操作はここから)
-uv run taxdesk doctor --json            # runtime・DB・配置の診断
-uv run taxdesk ai status --json         # Claude CLI の版・flag・実効認証
+uv run asurabook init --name "屋号" --years 2026
+uv run asurabook gui                    # GUI (owner 操作はここから)
+uv run asurabook doctor --json          # runtime・DB・配置の診断
+uv run asurabook ai status --json       # Claude CLI の版・flag・実効認証
 uv run pytest                           # 試験
 ```
 
-データの既定の置き場所は `%LOCALAPPDATA%\TaxDesk\orgs\default` です。`--data-dir` または環境変数 `TAXDESK_HOME` で変更できます。DB を OneDrive などの同期フォルダに置くと、`doctor` が警告します。
+データの既定の置き場所は `%LOCALAPPDATA%\AsuraBook\orgs\default` です。`--data-dir` または環境変数 `ASURABOOK_HOME` で変更できます。DB を OneDrive などの同期フォルダに置くと、`doctor` が警告します。
 
 ### CLI の主な command
 
@@ -106,7 +106,7 @@ Claude CLI 2.1.309 の `--json-schema` は draft 2020-12 の `$schema` 参照を
 ## 構成
 
 ```
-src/taxdesk/
+src/asurabook/
   domain/          金額・日付・仕訳検証・繰越計算 (DB/Qt非依存)
   application/     Core (command transaction)、各 command、帳票、backup、worker
   infrastructure/  SQLite 接続・migration、IPC framing/server、runtime_control、lock
@@ -114,7 +114,7 @@ src/taxdesk/
   evidence/        原本 spool、保管先 provider
   agents/          AgentBridge (claude -p)、レシート抽出の検証
   gui/             PySide6 画面
-  cli/             taxdesk command
+  cli/             asurabook command
   specs/           receipt_extraction / cli_response schema、固定 prompt
 docs/design/       詳細設計書 1.0
 tests/             golden fixtures (AC01〜AC12) と各層の試験

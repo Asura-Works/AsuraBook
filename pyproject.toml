@@ -1,7 +1,7 @@
 [project]
-name = "taxdesk"
+name = "asurabook"
 version = "0.1.0"
-description = "TaxDesk: 個人事業者向けローカル会計・証憑・申告準備アプリ（詳細設計 1.0 に基づく実装）"
+description = "AsuraBook: 個人事業者向けローカル会計・証憑・申告準備アプリ（詳細設計 1.0 に基づく実装）"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
@@ -14,7 +14,7 @@ gui = [
 ]
 
 [project.scripts]
-taxdesk = "taxdesk.cli.main:main"
+asurabook = "asurabook.cli.main:main"
 
 [dependency-groups]
 dev = [

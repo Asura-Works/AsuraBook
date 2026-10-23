@@ -14,10 +14,10 @@ from pathlib import Path
 import pytest
 
 from conftest import ASSISTANT, OWNER, Client
-from taxdesk.agents import bridge, receipt
-from taxdesk.application import config as app_config
-from taxdesk.application.worker import Worker
-from taxdesk.infrastructure import runtime_control
+from asurabook.agents import bridge, receipt
+from asurabook.application import config as app_config
+from asurabook.application.worker import Worker
+from asurabook.infrastructure import runtime_control
 
 FIXTURES = Path(__file__).parent / "fixtures"
 EXAMPLE = json.loads((FIXTURES / "receipt_extraction.example.json").read_text(encoding="utf-8"))
@@ -117,8 +117,8 @@ def test_local_dir_upload_verifies_and_survives_lost_response(client: Client, co
     worker = Worker(core, ASSISTANT)
     # 応答消失: put は成功したが complete を呼ぶ前に停止した状態を作る
     claim = core.execute("worker.upload_claim", {}, ASSISTANT)["data"]
-    from taxdesk.evidence.cloud import LocalDirStorage
-    from taxdesk.evidence.spool import open_object
+    from asurabook.evidence.cloud import LocalDirStorage
+    from asurabook.evidence.spool import open_object
     storage = LocalDirStorage(core.paths.cloud_local)
     storage.put(claim["key"], open_object(core.paths.spool, claim["local_ref"]), claim["sha256"])
     # lease 期限切れ後に再実行しても再送せず照会で verified にする

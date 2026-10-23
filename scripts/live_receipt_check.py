@@ -14,12 +14,12 @@ import sys
 import tempfile
 from pathlib import Path
 
-import taxdesk.application.commands  # noqa: F401
-from taxdesk.agents import bridge
-from taxdesk.application import config as app_config
-from taxdesk.application.core import Core
-from taxdesk.application.session import Session
-from taxdesk.application.worker import Worker
+import asurabook.application.commands  # noqa: F401
+from asurabook.agents import bridge
+from asurabook.application import config as app_config
+from asurabook.application.core import Core
+from asurabook.application.session import Session
+from asurabook.application.worker import Worker
 
 
 def main() -> int:
@@ -27,7 +27,7 @@ def main() -> int:
     ap.add_argument("image")
     ap.add_argument("--data-dir")
     args = ap.parse_args()
-    data_dir = Path(args.data_dir or tempfile.mkdtemp(prefix="taxdesk-live-"))
+    data_dir = Path(args.data_dir or tempfile.mkdtemp(prefix="asurabook-live-"))
     core = Core(data_dir)
     owner = Session(principal="live:owner", profile="owner", entry_point="gui")
     if not core.db_exists():

@@ -10,10 +10,10 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator
 
-from taxdesk.cli.main import main
-from taxdesk.infrastructure.ipc import framing
+from asurabook.cli.main import main
+from asurabook.infrastructure.ipc import framing
 
-SCHEMA = json.loads((Path(__file__).parents[1] / "src/taxdesk/specs/cli_response.schema.json").read_text())
+SCHEMA = json.loads((Path(__file__).parents[1] / "src/asurabook/specs/cli_response.schema.json").read_text())
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
@@ -31,7 +31,7 @@ def test_cli_exit_codes_and_schema(capsys, tmp_path: Path):
     code, resp = run(capsys, "journal", "list", *d)
     assert code == 8 and resp["error"]["code"] == "NOT_INITIALIZED"
     code, resp = run(capsys, "init", "--name", "架空", "--years", "2026", "--dry-run", *d)
-    assert code == 0 and not (tmp_path / "d" / "taxdesk.db").exists()  # 未初期化dry-runでDBを作らない
+    assert code == 0 and not (tmp_path / "d" / "asurabook.db").exists()  # 未初期化dry-runでDBを作らない
     code, resp = run(capsys, "init", "--name", "架空", "--years", "2026", *d)
     assert code == 0
     code, resp = run(capsys, "journal", "show", "missing-id", *d)
@@ -68,12 +68,12 @@ def test_cli_import_and_export_root(capsys, tmp_path: Path):
                      "--path", str(tmp_path / "outside.csv"), *d)
     assert resp["error"]["code"] == "EXPORT_PATH_DENIED"
     code, resp = run(capsys, "report", "export", "--year", "2026", "--report", "journal",
-                     "--path", "../taxdesk.db.csv", *d)
+                     "--path", "../asurabook.db.csv", *d)
     assert resp["error"]["code"] == "EXPORT_PATH_DENIED"
 
 
 def test_csv_export_neutralizes_formulas():
-    from taxdesk.application.exports import rows_to_csv
+    from asurabook.application.exports import rows_to_csv
     data = rows_to_csv(["a"], [["=HYPERLINK(\"x\")"], [-500], ["@SUM(A1)"]]).decode("utf-8-sig")
     assert "'=HYPERLINK" in data and "'@SUM" in data and "\r\n-500\r\n" in data
 
@@ -88,9 +88,9 @@ def test_framing_roundtrip_and_limit():
 
 @pytest.mark.skipif(sys.platform == "win32", reason="Unix socket")
 def test_ipc_server_uses_same_service_and_assistant_profile(tmp_path: Path):
-    from taxdesk.application.core import Core
-    from taxdesk.application.session import Session, cli_session
-    from taxdesk.infrastructure.ipc.server import CoreClient, CoreServer, socket_path
+    from asurabook.application.core import Core
+    from asurabook.application.session import Session, cli_session
+    from asurabook.infrastructure.ipc.server import CoreClient, CoreServer, socket_path
     core = Core(tmp_path / "d")
     owner = Session("t:owner", "owner", "gui")
     assert core.execute("org.init", {"display_name": "架空", "years": [2026]}, owner)["ok"]

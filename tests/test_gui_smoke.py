@@ -9,8 +9,8 @@ import pytest
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 QtWidgets = pytest.importorskip("PySide6.QtWidgets")
 
-from taxdesk.application.core import Core  # noqa: E402
-from taxdesk.application.session import gui_owner_session  # noqa: E402
+from asurabook.application.core import Core  # noqa: E402
+from asurabook.application.session import gui_owner_session  # noqa: E402
 
 
 @pytest.fixture
@@ -19,8 +19,8 @@ def app():
 
 
 def test_main_window_pages_and_journal_editor(app, tmp_path, monkeypatch):
-    from taxdesk.gui.app import MainWindow
-    from taxdesk.gui.journal_editor import JournalEditor
+    from asurabook.gui.app import MainWindow
+    from asurabook.gui.journal_editor import JournalEditor
     core = Core(tmp_path / "d")
     assert core.execute("org.init", {"display_name": "架空", "years": [2026]}, gui_owner_session())["ok"]
     window = MainWindow(core)

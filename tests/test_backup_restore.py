@@ -5,9 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from conftest import ASSISTANT, OWNER, Client
-from taxdesk.application import config as app_config
-from taxdesk.application.core import Core
-from taxdesk.application.worker import Worker
+from asurabook.application import config as app_config
+from asurabook.application.core import Core
+from asurabook.application.worker import Worker
 
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x01" * 64
 
@@ -69,13 +69,13 @@ def test_restore_in_place_keeps_aside_copy(client: Client, core, tmp_path: Path)
     preview = client.ok("restore.preview", {"path": backup["path"]})
     assert preview["changes_since_backup"]["audit_events_after_backup"] > 0
     result = client.ok("restore.apply", {"path": backup["path"], "confirm": True})
-    assert Path(result["aside"], "taxdesk.db").exists()
+    assert Path(result["aside"], "asurabook.db").exists()
     assert client.ok("report.profit_loss", {"year": 2026})["total_expense_jpy"] == 500
 
 
 def test_tampered_backup_is_rejected(client: Client, tmp_path: Path):
     backup = client.ok("backup.create", {"dest": str(tmp_path / "b")})
-    db = Path(backup["path"]) / "taxdesk.db"
+    db = Path(backup["path"]) / "asurabook.db"
     db.write_bytes(db.read_bytes() + b"x")
     verify = client.ok("backup.verify", {"path": backup["path"]})
     assert not verify["ok"]

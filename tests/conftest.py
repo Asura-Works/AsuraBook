@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-import taxdesk.application.commands  # noqa: F401  command登録
-from taxdesk.application.core import Core
-from taxdesk.application.session import Session
+import asurabook.application.commands  # noqa: F401  command登録
+from asurabook.application.core import Core
+from asurabook.application.session import Session
 
 OWNER = Session(principal="test:owner", profile="owner", entry_point="gui")
 ASSISTANT = Session(principal="test:cli", profile="assistant", entry_point="cli")

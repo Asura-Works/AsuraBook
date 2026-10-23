@@ -105,7 +105,7 @@ def test_ac06_double_reverse_single_reversal(client: Client):
 
 
 def test_ac07_monthly_to_detail_no_duplicate_revenue(client: Client, core):
-    from taxdesk.domain.values import new_id
+    from asurabook.domain.values import new_id
     conn = core.writer()
     org = conn.execute("SELECT id FROM org").fetchone()[0]
     sa = client.ok("source_accounts.create", {"code": "PF-A", "provider": "demo", "kind": "platform",
@@ -249,7 +249,7 @@ def test_assistant_cannot_post_without_capability(client: Client):
 
 
 def test_capability_cannot_be_issued_from_cli(client: Client):
-    from taxdesk.application.session import Session
+    from asurabook.application.session import Session
     cli_owner_claim = Session(principal="x", profile="owner", entry_point="cli")
     err = client.err("capability.issue", {"scope": "journal.post", "principal": "x", "targets": [{"id": "a"}]},
                      session=cli_owner_claim)
@@ -291,7 +291,7 @@ def test_period_close_blocks_posting(client: Client):
 
 def test_audit_chain_links(core, client: Client):
     client.post("2026-02-01", [("519", "debit", 500), ("100", "credit", 500)])
-    from taxdesk.domain.values import canonical_json, sha256_hex
+    from asurabook.domain.values import canonical_json, sha256_hex
     rows = core.writer().execute("SELECT * FROM audit_events ORDER BY sequence_no").fetchall()
     prev = "0" * 64
     for r in rows:
