@@ -61,13 +61,22 @@ def client(core: Core) -> Client:
     return Client(core)
 
 
+def _gh_error(title: str, text: str) -> None:
+    import sys
+    title = title.replace("%", "%25").replace("\r", "").replace("\n", " ").replace(":", "%3A").replace(",", "%2C")
+    text = text[-1800:].replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+    sys.__stdout__.write(f"::error title={title}::{text}\n")
+    sys.__stdout__.flush()
+
+
 def pytest_runtest_logreport(report) -> None:
     """GitHub Actions では失敗を annotation として出す (ログ本体を取得できない環境でも原因を読めるように)。"""
     import os
-    import sys
-    if not os.environ.get("GITHUB_ACTIONS") or not report.failed:
-        return
-    text = str(report.longrepr)[-1800:]
-    text = text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
-    sys.__stdout__.write(f"::error title={report.nodeid} ({report.when})::{text}\n")
-    sys.__stdout__.flush()
+    if os.environ.get("GITHUB_ACTIONS") and report.failed:
+        _gh_error(f"{report.nodeid} ({report.when})", str(report.longrepr))
+
+
+def pytest_collectreport(report) -> None:
+    import os
+    if os.environ.get("GITHUB_ACTIONS") and report.failed:
+        _gh_error(f"collect {report.nodeid}", str(report.longrepr))
