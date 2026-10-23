@@ -35,19 +35,19 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          uv run pytest -q -rs -m "not gui" 2>&1 | tee pytest-core.txt
+          uv run pytest -rs -m "not gui" 2>&1 | tee pytest-core.txt
       - name: Tests (GUI offscreen)
         if: always()
         shell: bash
         run: |
           set -o pipefail
-          uv run pytest -q -rs -m gui -p no:cacheprovider 2>&1 | tee pytest-gui.txt
+          uv run pytest -rs -m gui -p no:cacheprovider 2>&1 | tee pytest-gui.txt
       - name: Verify Windows-only tests actually ran
         if: runner.os == 'Windows'
         shell: bash
         run: |
           set -o pipefail
-          uv run pytest -q -rs tests/test_cli_ipc.py -k "windows_named_pipe" 2>&1 | tee pytest-win.txt
+          uv run pytest -rs tests/test_cli_ipc.py -k "windows_named_pipe" 2>&1 | tee pytest-win.txt
           grep -q "1 passed" pytest-win.txt
           echo "::notice title=windows-only tests::$(tail -1 pytest-win.txt)"
       - name: Summaries as annotations
