@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "document_kind": "receipt",
+  "currency": "JPY",
+  "merchant_name": "架空文具店",
+  "transaction_date": "2026-10-05",
+  "total_jpy": 1100,
+  "tax_breakdowns": [
+    {
+      "rate_decimal": "0.10",
+      "tax_inclusive_base_jpy": 1100,
+      "tax_exclusive_base_jpy": 1000,
+      "tax_jpy": 100,
+      "page": 1,
+      "raw_text": "10%対象 1,100円 内消費税100円"
+    }
+  ],
+  "registration_number": null,
+  "payment_method": "card",
+  "items": [
+    {
+      "description": "架空ノート",
+      "quantity_decimal": "1",
+      "unit_price_jpy": 1100,
+      "line_total_jpy": 1100,
+      "tax_rate_decimal": "0.10",
+      "page": 1
+    }
+  ],
+  "fields_metadata": [
+    {
+      "field_path": "total_jpy",
+      "raw_text": "合計 1,100円",
+      "page": 1,
+      "confidence": null,
+      "bbox": null
+    }
+  ],
+  "issues": []
+}

@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+# 利用者データ・DBはrepoへ入れない
+*.db
+*.db-wal
+*.db-shm
+/data/

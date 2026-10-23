@@ -1,0 +1,161 @@
+{
+  "bundle": "TaxDesk_Detailed_Design",
+  "date": "2026-10-23",
+  "encoding": "UTF-8",
+  "entry_manifest_excludes": [
+    "manifest.json",
+    "VERIFICATION.md"
+  ],
+  "files": [
+    {
+      "path": "00_README.md",
+      "bytes": 5542,
+      "crc32": "a82cf68a"
+    },
+    {
+      "path": "01_scope_requirements.md",
+      "bytes": 5902,
+      "crc32": "9268224b"
+    },
+    {
+      "path": "02_architecture.md",
+      "bytes": 6851,
+      "crc32": "6578db47"
+    },
+    {
+      "path": "03_data_model.md",
+      "bytes": 11041,
+      "crc32": "b9eb667c"
+    },
+    {
+      "path": "04_journal_ledger.md",
+      "bytes": 7093,
+      "crc32": "184c78f9"
+    },
+    {
+      "path": "05_import_pipeline.md",
+      "bytes": 7420,
+      "crc32": "674edeb0"
+    },
+    {
+      "path": "06_bank_and_card.md",
+      "bytes": 6607,
+      "crc32": "ff8305f8"
+    },
+    {
+      "path": "07_platform_sales.md",
+      "bytes": 7547,
+      "crc32": "88e3dfb5"
+    },
+    {
+      "path": "08_receipt_ocr.md",
+      "bytes": 6685,
+      "crc32": "23e5166c"
+    },
+    {
+      "path": "09_cloud_storage_security.md",
+      "bytes": 5572,
+      "crc32": "4b897bee"
+    },
+    {
+      "path": "10_ui_screens.md",
+      "bytes": 6401,
+      "crc32": "54097e58"
+    },
+    {
+      "path": "11_tax_and_year_end.md",
+      "bytes": 9701,
+      "crc32": "2e5a391a"
+    },
+    {
+      "path": "12_etax_integration.md",
+      "bytes": 6553,
+      "crc32": "9b2e1577"
+    },
+    {
+      "path": "13_evidence_compliance.md",
+      "bytes": 6627,
+      "crc32": "70182db4"
+    },
+    {
+      "path": "14_dashboard_reports.md",
+      "bytes": 4941,
+      "crc32": "24bfdddb"
+    },
+    {
+      "path": "15_cli_agent.md",
+      "bytes": 7861,
+      "crc32": "0ebef8c4"
+    },
+    {
+      "path": "16_operations_backup_distribution.md",
+      "bytes": 6171,
+      "crc32": "331e7916"
+    },
+    {
+      "path": "17_testing_acceptance.md",
+      "bytes": 5579,
+      "crc32": "8b62d86e"
+    },
+    {
+      "path": "18_implementation_roadmap.md",
+      "bytes": 4537,
+      "crc32": "2d996c99"
+    },
+    {
+      "path": "19_sources_and_decisions.md",
+      "bytes": 7377,
+      "crc32": "d284184d"
+    },
+    {
+      "path": "20_ai_implementation_handoff.md",
+      "bytes": 5429,
+      "crc32": "1501b510"
+    },
+    {
+      "path": "21_ai_bridge_monitoring.md",
+      "bytes": 15093,
+      "crc32": "57bfc057"
+    },
+    {
+      "path": "examples/README.md",
+      "bytes": 899,
+      "crc32": "329ad8da"
+    },
+    {
+      "path": "examples/cli_response.example.json",
+      "bytes": 280,
+      "crc32": "4049e614"
+    },
+    {
+      "path": "examples/generic_bank_v1.csv",
+      "bytes": 279,
+      "crc32": "0cc1a5f3"
+    },
+    {
+      "path": "examples/receipt_extraction.example.json",
+      "bytes": 876,
+      "crc32": "36a23869"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 13836,
+      "crc32": "ae886d27"
+    },
+    {
+      "path": "specs/cli_response.schema.json",
+      "bytes": 2142,
+      "crc32": "7b5ea754"
+    },
+    {
+      "path": "specs/prompts/receipt_extract.md",
+      "bytes": 2847,
+      "crc32": "f82d8e36"
+    },
+    {
+      "path": "specs/receipt_extraction.schema.json",
+      "bytes": 6469,
+      "crc32": "98f1ee2f"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+row_id,source_account,event_type,currency,transaction_date,amount_jpy,tax_status,description
+DEMO-BANK-001,BANK-DEMO,bank_credit,JPY,2026-10-20,82960,unknown,架空サービス精算入金
+DEMO-BANK-002,BANK-DEMO,bank_debit,JPY,2026-11-27,-11000,unknown,架空カード引落し

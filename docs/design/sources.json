@@ -1,0 +1,575 @@
+[
+  {
+    "id": "S001",
+    "url": "https://www.tkc.jp/fx/",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "01_scope_requirements.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S002",
+    "url": "https://www.tkc.jp/fx/fintech/",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "01_scope_requirements.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S003",
+    "url": "https://www.tkc.jp/fx/tds/",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "01_scope_requirements.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S004",
+    "url": "https://docs.python.org/3.13/library/sqlite3.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "02_architecture.md",
+      "03_data_model.md"
+    ]
+  },
+  {
+    "id": "S005",
+    "url": "https://docs.astral.sh/uv/concepts/projects/sync/",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "02_architecture.md",
+      "16_operations_backup_distribution.md"
+    ]
+  },
+  {
+    "id": "S006",
+    "url": "https://doc.qt.io/qtforpython-6/gettingstarted.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "02_architecture.md",
+      "10_ui_screens.md"
+    ]
+  },
+  {
+    "id": "S007",
+    "url": "https://www.sqlite.org/wal.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "02_architecture.md",
+      "16_operations_backup_distribution.md"
+    ]
+  },
+  {
+    "id": "S008",
+    "url": "https://www.sqlite.org/backup.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "02_architecture.md",
+      "16_operations_backup_distribution.md"
+    ]
+  },
+  {
+    "id": "S009",
+    "url": "https://learn.microsoft.com/en-us/windows/win32/ipc/named-pipe-security-and-access-rights",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "02_architecture.md"
+    ]
+  },
+  {
+    "id": "S010",
+    "url": "https://www.sqlite.org/foreignkeys.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "03_data_model.md"
+    ]
+  },
+  {
+    "id": "S011",
+    "url": "https://www.sqlite.org/stricttables.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "03_data_model.md"
+    ]
+  },
+  {
+    "id": "S012",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2200.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "04_journal_ledger.md",
+      "07_platform_sales.md",
+      "11_tax_and_year_end.md"
+    ]
+  },
+  {
+    "id": "S013",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2210.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "04_journal_ledger.md",
+      "11_tax_and_year_end.md"
+    ]
+  },
+  {
+    "id": "S014",
+    "url": "https://www.smbc.co.jp/direct/sousa/help_kouza/10.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "05_import_pipeline.md",
+      "06_bank_and_card.md"
+    ]
+  },
+  {
+    "id": "S015",
+    "url": "https://docs.link.getmoneytree.com/docs/getting-started",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "06_bank_and_card.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S016",
+    "url": "https://docs.link.getmoneytree.com/docs/product-and-tech-overview",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "06_bank_and_card.md"
+    ]
+  },
+  {
+    "id": "S017",
+    "url": "https://docs.link.getmoneytree.com/reference/post-oauth-authorize",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "06_bank_and_card.md"
+    ]
+  },
+  {
+    "id": "S018",
+    "url": "https://www.rakuten-card.co.jp/e-navi/p/rc/e-navi/statement/popup2.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "06_bank_and_card.md"
+    ]
+  },
+  {
+    "id": "S019",
+    "url": "https://www.lancers.jp/faq/l1037/497",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S020",
+    "url": "https://www.lancers.jp/faq/l1037/403",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S021",
+    "url": "https://www.lancers.jp/faq/l1037/380",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S022",
+    "url": "https://www.lancers.jp/faq/A1034/950",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S023",
+    "url": "https://help.coconala.com/hc/ja/articles/900000064326",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S024",
+    "url": "https://help.coconala.com/hc/ja/articles/230180287",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S025",
+    "url": "https://help.coconala.com/hc/ja/articles/900000102266",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S026",
+    "url": "https://help.coconala.com/hc/ja/articles/218723887",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S027",
+    "url": "https://intercom.help/mentajp/ja/articles/3025557",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S028",
+    "url": "https://intercom.help/mentajp/ja/articles/3025575",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S029",
+    "url": "https://intercom.help/mentajp/ja/articles/3025582",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S030",
+    "url": "https://blog.crowdworks.jp/archives/5636/",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S031",
+    "url": "https://crowdworks-help.zendesk.com/hc/ja/articles/5006051796254",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S032",
+    "url": "https://crowdworks-help.zendesk.com/hc/ja/articles/5006085240734",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S033",
+    "url": "https://crowdworks-help.zendesk.com/hc/ja/articles/5006101340574",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S034",
+    "url": "https://www.help-note.com/hc/ja/articles/360010430173",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S035",
+    "url": "https://www.help-note.com/hc/ja/articles/35228036879257",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md"
+    ]
+  },
+  {
+    "id": "S036",
+    "url": "https://www.help-note.com/hc/ja/articles/46643492548121",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "07_platform_sales.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S037",
+    "url": "https://code.claude.com/docs/en/headless",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "08_receipt_ocr.md",
+      "19_sources_and_decisions.md",
+      "21_ai_bridge_monitoring.md"
+    ]
+  },
+  {
+    "id": "S038",
+    "url": "https://code.claude.com/docs/en/cli-reference",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "08_receipt_ocr.md",
+      "19_sources_and_decisions.md",
+      "21_ai_bridge_monitoring.md"
+    ]
+  },
+  {
+    "id": "S039",
+    "url": "https://code.claude.com/docs/en/tools-reference",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "08_receipt_ocr.md",
+      "19_sources_and_decisions.md",
+      "21_ai_bridge_monitoring.md"
+    ]
+  },
+  {
+    "id": "S040",
+    "url": "https://www.invoice-kohyo.nta.go.jp/faq/faq-category/400/faq0017.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "08_receipt_ocr.md"
+    ]
+  },
+  {
+    "id": "S041",
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "09_cloud_storage_security.md"
+    ]
+  },
+  {
+    "id": "S042",
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "09_cloud_storage_security.md"
+    ]
+  },
+  {
+    "id": "S043",
+    "url": "https://doc.qt.io/qtforpython-6/tutorials/basictutorial/signals_and_slots.html",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "10_ui_screens.md"
+    ]
+  },
+  {
+    "id": "S044",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1350.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "11_tax_and_year_end.md"
+    ]
+  },
+  {
+    "id": "S045",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "11_tax_and_year_end.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S046",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2100.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "11_tax_and_year_end.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S047",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2072.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "11_tax_and_year_end.md"
+    ]
+  },
+  {
+    "id": "S048",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/shinkoku/kojin_jigyo/0026007-003_02.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "11_tax_and_year_end.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S049",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/pdf/qa/113.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "11_tax_and_year_end.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S050",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/shinkoku/tebiki/2024/pdf/046.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "11_tax_and_year_end.md"
+    ]
+  },
+  {
+    "id": "S051",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/shinkoku/tebiki/2025/pdf/037.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "11_tax_and_year_end.md"
+    ]
+  },
+  {
+    "id": "S052",
+    "url": "https://www.nta.go.jp/taxes/shiraberu/shinkoku/tokushu/kakushin-sakusei/",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "12_etax_integration.md"
+    ]
+  },
+  {
+    "id": "S053",
+    "url": "https://www.e-tax.nta.go.jp/toiawase/qa/e-taxweb/49.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "12_etax_integration.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S054",
+    "url": "https://www.e-tax.nta.go.jp/shiyo/api.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "12_etax_integration.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S055",
+    "url": "https://www.e-tax.nta.go.jp/shiyo/index.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "12_etax_integration.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S056",
+    "url": "https://www.e-tax.nta.go.jp/shiyo/ksk2/ksk2_shiyo3.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "12_etax_integration.md",
+      "19_sources_and_decisions.md"
+    ]
+  },
+  {
+    "id": "S057",
+    "url": "https://www.e-tax.nta.go.jp/toiawase/qa/yokuaru05/03.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "12_etax_integration.md"
+    ]
+  },
+  {
+    "id": "S058",
+    "url": "https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0026006-122.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "13_evidence_compliance.md"
+    ]
+  },
+  {
+    "id": "S059",
+    "url": "https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0026007-006_05.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "13_evidence_compliance.md"
+    ]
+  },
+  {
+    "id": "S060",
+    "url": "https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0026007-006_03.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "13_evidence_compliance.md"
+    ]
+  },
+  {
+    "id": "S061",
+    "url": "https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/pdf/0026007-006_01.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "13_evidence_compliance.md"
+    ]
+  },
+  {
+    "id": "S062",
+    "url": "https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/0021006-031.htm",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "13_evidence_compliance.md"
+    ]
+  },
+  {
+    "id": "S063",
+    "url": "https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/tokusetsu/pdf/0023006-085_03.pdf",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "13_evidence_compliance.md"
+    ]
+  },
+  {
+    "id": "S064",
+    "url": "https://code.claude.com/docs/en/authentication",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "19_sources_and_decisions.md",
+      "21_ai_bridge_monitoring.md"
+    ]
+  },
+  {
+    "id": "S065",
+    "url": "https://developers.openai.com/codex/noninteractive",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "19_sources_and_decisions.md",
+      "21_ai_bridge_monitoring.md"
+    ]
+  },
+  {
+    "id": "S066",
+    "url": "https://developers.openai.com/codex/cli/reference",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "19_sources_and_decisions.md",
+      "21_ai_bridge_monitoring.md"
+    ]
+  },
+  {
+    "id": "S067",
+    "url": "https://developers.openai.com/codex/config-reference",
+    "checked": "2026-10-23",
+    "referenced_by": [
+      "19_sources_and_decisions.md",
+      "21_ai_bridge_monitoring.md"
+    ]
+  }
+]

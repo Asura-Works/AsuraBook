@@ -1,0 +1,306 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TaxDesk ReceiptExtraction 1.0",
+  "description": "画像の事実抽出候補。確定仕訳や法的適格性を意味しない。",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "1.0"
+      ]
+    },
+    "document_kind": {
+      "type": "string",
+      "enum": [
+        "receipt",
+        "invoice",
+        "credit_note",
+        "unknown"
+      ]
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "JPY",
+        "other",
+        "unknown"
+      ]
+    },
+    "merchant_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "transaction_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "total_jpy": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "tax_breakdowns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rate_decimal": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "tax_inclusive_base_jpy": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "tax_exclusive_base_jpy": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "tax_jpy": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "page": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "raw_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "rate_decimal",
+          "tax_inclusive_base_jpy",
+          "tax_exclusive_base_jpy",
+          "tax_jpy",
+          "page",
+          "raw_text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "registration_number": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^T[0-9]{13}$"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "cash",
+        "card",
+        "transfer",
+        "other",
+        "unknown"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantity_decimal": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "unit_price_jpy": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "line_total_jpy": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "tax_rate_decimal": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$"
+          },
+          "page": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          }
+        },
+        "required": [
+          "description",
+          "quantity_decimal",
+          "unit_price_jpy",
+          "line_total_jpy",
+          "tax_rate_decimal",
+          "page"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fields_metadata": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field_path": {
+            "type": "string"
+          },
+          "raw_text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "page": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "bbox": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "y": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "width": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "height": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "x",
+                  "y",
+                  "width",
+                  "height"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "field_path",
+          "raw_text",
+          "page",
+          "confidence",
+          "bbox"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "field_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "warning",
+              "needs_review"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "field_path",
+          "message",
+          "severity"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "document_kind",
+    "currency",
+    "merchant_name",
+    "transaction_date",
+    "total_jpy",
+    "tax_breakdowns",
+    "registration_number",
+    "payment_method",
+    "items",
+    "fields_metadata",
+    "issues"
+  ],
+  "additionalProperties": false
+}
